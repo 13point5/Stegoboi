@@ -1,3 +1,3 @@
 # text-to-img
 
-Convert text into image.
+Generate an image with given text.
