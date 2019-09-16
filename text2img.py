@@ -18,7 +18,7 @@ def get_line_height(font, text):
     return font.getsize(text)[1]
 
 
-def text2img(text, font_path=None, font_size=16, color='#000000', bg_color='#FFFFFF', lr_padding=8, max_width=300):
+def text2img(text, font_path=None, font_size=16, img_mode="L", color='#000000', bg_color='#FFFFFF', lr_padding=8, max_width=300):
 
     font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
     text = text.replace('\n', NEWLINE_STRING)
@@ -48,7 +48,7 @@ def text2img(text, font_path=None, font_size=16, color='#000000', bg_color='#FFF
     img_height = line_height * len(lines)
     img_width = max_line_width + 2*lr_padding
 
-    img = Image.new("L", (img_width, img_height), bg_color)
+    img = Image.new(img_mode, (img_width, img_height), bg_color) # use "L" for black and white
     canvas = ImageDraw.Draw(img)
 
     for idx, line in enumerate(lines):
@@ -58,10 +58,10 @@ def text2img(text, font_path=None, font_size=16, color='#000000', bg_color='#FFF
     return img
 
 
-def img2base64(img):
+def img2base64(img, format="PNG"):
     buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue())
+    img.save(buffered, format=format) # "PNG", "JPEG"
+    return str(base64.b64encode(buffered.getvalue()))
 
 
 if __name__ == '__main__':
