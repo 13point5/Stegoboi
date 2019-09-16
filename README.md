@@ -1,3 +1,3 @@
-# text-to-img
+# Stegoman
 
-Convert text into image.
+A collection of API endpoints useful for steganography

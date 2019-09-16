@@ -18,7 +18,7 @@ def get_line_height(font, text):
     return font.getsize(text)[1]
 
 
-def text2img(text, font_path=None, font_size=16, img_mode="L", color='#000000', bg_color='#FFFFFF', lr_padding=8, max_width=300):
+def text2img(text, font_path='Product Sans Regular.ttf', font_size=16, img_mode="L", color='#000000', bg_color='#FFFFFF', lr_padding=8, max_width=300):
 
     font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
     text = text.replace('\n', NEWLINE_STRING)
@@ -54,7 +54,6 @@ def text2img(text, font_path=None, font_size=16, img_mode="L", color='#000000', 
     for idx, line in enumerate(lines):
         canvas.text((lr_padding, idx * line_height), line, color, font=font)
     
-
     return img
 
 
@@ -67,7 +66,20 @@ def img2base64(img, format="PNG"):
 if __name__ == '__main__':
     text = 'asghbgebvfe vhrnhvf wvsnhufvs\n svdkhfdf'
     font_path = 'Product Sans Regular.ttf'
-
-    image = text2img(text=text, font_path=font_path)
-    img_str = img2base64(image)
-    print(img_str)
+    ps = {
+        'text': text,
+        'font_path': font_path,
+        'color': '#888888',
+        'bla': 2
+    }
+    try:
+        image = text2img(**ps)
+        image.save('tst.png')
+    except Exception as e:
+        print(e)
+        print(type(e))
+        print(str(e))
+    # image = text2img(text=text, font_path=font_path)
+    
+    # img_str = img2base64(image)
+    # print(img_str)
