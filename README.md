@@ -1,3 +1,3 @@
-# Stegoman
+# Stegoboi
 
 A collection of API endpoints useful for steganography
