@@ -60,7 +60,7 @@ def text2img(text, font_path='Product Sans Regular.ttf', font_size=16, img_mode=
 def img2base64(img, format="PNG"):
     buffered = BytesIO()
     img.save(buffered, format=format) # "PNG", "JPEG"
-    return str(base64.b64encode(buffered.getvalue()))
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 
 if __name__ == '__main__':
@@ -68,13 +68,14 @@ if __name__ == '__main__':
     font_path = 'Product Sans Regular.ttf'
     ps = {
         'text': text,
-        'font_path': font_path,
-        'color': '#888888',
-        'bla': 2
     }
     try:
         image = text2img(**ps)
         image.save('tst.png')
+        istr = img2base64(image).decode("utf-8")
+        print(istr)
+        print(type(istr))
+        # print(str(istr))
     except Exception as e:
         print(e)
         print(type(e))
