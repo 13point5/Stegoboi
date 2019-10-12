@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
-from text2img import text2img, img2base64
+from utils import *
+
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
@@ -9,20 +11,20 @@ def index():
 
 
 @app.route('/text2img', methods=['POST'])
-def txt_to_img():
-    res = {
-        'error': 'JSON payload required'
-    }
+def img_from_text():
+    res = { 'error': 'JSON payload required' }
     status_code = 400 # Bad request
 
     if request.headers['Content-Type'] == 'application/json':
         req = request.json
+
         try:
-            img = text2img(**req)
-            img_b64 = img2base64(img)
+            img = text_to_img(text = req["text"])
+            img_b64 = img_to_b64(img=img, format=req.get("format", "PNG"))
             res['img'] = img_b64
             del res['error']
-            status_code = 200 # OK
+            status_code = 200
+
         except Exception as e:
             res['error'] = 'Bad params'
 
