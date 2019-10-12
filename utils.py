@@ -1,5 +1,7 @@
 import base64
+import numpy as np
 from io import BytesIO
+from math import log, floor, ceil
 from PIL import Image, ImageFont, ImageDraw
 
 TOT_LEN_MAX = 1 << 10
@@ -21,7 +23,6 @@ def get_line_height(font, text):
 def text_to_img(text, font_path='Product Sans Regular.ttf', font_size=16, img_mode="L", color='#000000', bg_color='#FFFFFF', lr_padding=16, max_width=300):
 
     font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
-    text = text
     text = text.replace('\n', NEWLINE_STRING)
 
     effective_width = max_width - 2*lr_padding # centered text
@@ -100,7 +101,7 @@ def b64_to_img(img_str):
     return img
 
 
-def data_to_bin(data):
+def msg_to_bin(data):
     if type(data) != type([]):
         raise TypeError("Data must be a list")
 
@@ -114,11 +115,49 @@ def data_to_bin(data):
         else:
             raise ValueError("Unsupported data: only alphabets and numbers allowed")
     
+    bin_data = list(map(int, list(bin_data)))
     return bin_data
 
 
+def img_to_array(img):
+    return list(bytearray(img.tobytes()))
+
+
+def set_lsb(num, bit):
+    mask = 254
+
+    if bit == 1:
+        num |= 1
+    else:
+        num &= mask
+    
+    return num
+
+
+def get_lsb(num):
+    if num & 1 == 1:
+        return 1
+    return 0
+
+    
 if __name__ == "__main__":
-    i= Image.open('bla.bmp')
-    ba=i.tobytes()
-    print(len(ba))
-    print(data_to_bin(['a', 'b', '9']))
+    img = text_to_img('13point5')
+    img.save('original.bmp')
+    imsize = img.size
+    print(imsize)
+    bl = img_to_array(img)
+
+    bits = '1101010010101010010100010101000010101'
+    bits = list(bits)
+    bits = list(map(int, bits))
+    
+    ebl = bl.copy()
+    for i in range(len(bits)):
+        ebl[i] = set_lsb(ebl[i], bits[i])
+    
+    dbits = ebl
+    dbits = np.array(dbits)
+    dbits = dbits.reshape((imsize[1], imsize[0]))
+    dbits = np.uint8(dbits)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+    dimg = Image.fromarray(dbits, mode="L")
+    dimg.save("hope.bmp")

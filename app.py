@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from utils import *
+from stego import *
 
 
 app = Flask(__name__)
@@ -12,21 +13,47 @@ def index():
 
 @app.route('/text2img', methods=['POST'])
 def img_from_text():
-    res = { 'error': 'JSON payload required' }
-    status_code = 400 # Bad request
+    res = dict()
+    status_code = 400
 
-    if request.headers['Content-Type'] == 'application/json':
+    try:
         req = request.json
 
-        try:
-            img = text_to_img(text = req["text"])
-            img_b64 = img_to_b64(img=img, format=req.get("format", "PNG"))
-            res['img'] = img_b64
-            del res['error']
-            status_code = 200
+        img = text_to_img(text = req["text"])
+        img_b64 = img_to_b64(img, format="BMP")
 
-        except Exception as e:
-            res['error'] = 'Bad params'
+        res['img'] = img_b64
+        status_code = 200
+
+    except Exception as e:
+        print(e)
+        res['error'] = 'Bad params'
+
+    res = jsonify(res)
+    res.status_code = status_code    
+    return res
+
+
+@app.route('/shrencrypt', methods=['POST'])
+def shrencrypt_img():
+    res = dict()
+    status_code = 400
+
+    try:
+        req = request.json
+
+        text = req['text']
+        msg = req['msg']
+
+        img = encrypt_lsb(text, msg)
+        img_b64 = img_to_b64(img, format="BMP")
+
+        res['img'] = img_b64
+        status_code = 200
+    
+    except Exception as e:
+        print(e)
+        res['error'] = 'Bad params'
 
     res = jsonify(res)
     res.status_code = status_code    
