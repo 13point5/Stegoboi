@@ -45,7 +45,7 @@ def shrencrypt_img():
         text = req['text']
         msg = req['msg']
 
-        msg = list('shre') + [len(msg)] + msg
+        msg = list('shre') + [str(len(msg))] + msg
 
         img = encrypt_lsb(text, msg)
         img_b64 = img_to_b64(img, format="BMP")
