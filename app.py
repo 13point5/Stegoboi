@@ -53,7 +53,33 @@ def shrencrypt_img():
     
     except Exception as e:
         print(e)
-        res['error'] = 'Bad params'
+        res['error'] = 'Something went wrong'
+
+    res = jsonify(res)
+    res.status_code = status_code    
+    return res
+
+
+@app.route('/deshrencrypt', methods=['POST'])
+def deshrencrypt():
+    res = dict()
+    status_code = 400
+
+    try:
+        req = request.json
+
+        img = req['img']
+
+        img = b64_to_img(img)
+
+        msg = decrypt_shre(img)
+
+        res['msg'] = msg
+        status_code = 200
+
+    except Exception as e:
+        print(e)
+        res['error'] = 'Something went wrong'
 
     res = jsonify(res)
     res.status_code = status_code    

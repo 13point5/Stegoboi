@@ -23,9 +23,50 @@ def encrypt_lsb(text, msg):
     return enc_img
 
 
+def decrypt_shre(img):
+    img = img_to_array(img)
+    
+    tag_bits = ''
+    for i in range(20):
+        tag_bits += str(get_lsb(img[i]))
+    
+    tag = []
+    for i in range(0, 20, 5):
+        tag.append(bin_to_char(tag_bits[i : i+5]))
+    
+    # print(tag)
+
+    msg_len_bits = ''
+    for i in range(20, 30):
+        msg_len_bits += str(get_lsb(img[i]))
+    
+    msg_len = int(msg_len_bits, 2)
+
+    # print(msg_len)
+
+    msg_bits = ''
+    for i in range(30, 30 + 10*msg_len):
+        msg_bits += str(get_lsb(img[i]))
+    
+    # print(msg_bits, len(msg_bits))
+    
+    msg = []
+    for i in range(0, len(msg_bits), 10):
+        msg.append(int(msg_bits[i : i+10], 2))
+    
+    return msg
+
 if __name__ == "__main__":
+
+    filename = 'enc.bmp'
+
     text = 'the subtle art of not giving fucks'
-    msg = list('387653v78b56y')
+    msg = ['s', 'h', 'r', 'e', '3', '2', '6', '1']
 
     img = encrypt_lsb(text, msg)
-    img.save('enc.jpg')
+    img.save(filename)
+
+    img = Image.open(filename)
+    ib64 = img_to_b64(img, format="BMP")
+    print(ib64)
+    

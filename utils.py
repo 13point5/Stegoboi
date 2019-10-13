@@ -4,8 +4,9 @@ from io import BytesIO
 from math import log, floor, ceil
 from PIL import Image, ImageFont, ImageDraw
 
-TOT_LEN_MAX = 1 << 10
-WORD_LEN_MAX = 1 << 6
+
+WORD_LEN_BITS = 10
+WORD_LEN_MAX = 1 << WORD_LEN_BITS
 
 NEWLINE_CHAR = '\uFFFD'
 WHITESPACE = ' '
@@ -75,17 +76,21 @@ def get_char_bin(char):
 def get_num_bin(num):
     num = int(num)
     
-    if num > TOT_LEN_MAX:
+    if num > WORD_LEN_MAX:
         raise ValueError("Number bigger than {}".format(TOT_LEN_MAX))
 
-    if num > WORD_LEN_MAX:
-        padding = 6
-    else:
-        padding = 10
-    
+
     num_bin = bin(num)[2:]
-    num_bin = zero_pad(padding, num_bin) + num_bin
+    num_bin = zero_pad(WORD_LEN_BITS, num_bin) + num_bin
     return num_bin
+
+
+def bin_to_char(bits):
+    assert type(bits) == type('string')
+
+    pos = int(bits, 2)
+    char_pos = ord('a') + pos
+    return chr(char_pos)
 
 
 def img_to_b64(img, format=None):
@@ -141,23 +146,4 @@ def get_lsb(num):
 
     
 if __name__ == "__main__":
-    img = text_to_img('13point5')
-    img.save('original.bmp')
-    imsize = img.size
-    print(imsize)
-    bl = img_to_array(img)
-
-    bits = '1101010010101010010100010101000010101'
-    bits = list(bits)
-    bits = list(map(int, bits))
-    
-    ebl = bl.copy()
-    for i in range(len(bits)):
-        ebl[i] = set_lsb(ebl[i], bits[i])
-    
-    dbits = ebl
-    dbits = np.array(dbits)
-    dbits = dbits.reshape((imsize[1], imsize[0]))
-    dbits = np.uint8(dbits)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-    dimg = Image.fromarray(dbits, mode="L")
-    dimg.save("hope.bmp")
+    pass

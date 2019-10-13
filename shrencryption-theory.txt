@@ -1,0 +1,5 @@
+msg format: TAG | MSG_LEN | [WORD_LENS...]
+
+TAG: SHRE -> 4chars x 5bits = 20 bits
+MSG_LEN -> 1024 as max value = 10 bits
+WORD_LENS -> 1024 as max value = 10 bits/word
